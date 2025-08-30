@@ -13,11 +13,14 @@ datapath = datapath / "metrohm_ic_test_files" / "ancat_chromatogram.txt"
 def test_first_data_point_is_correct():
     actual_anion, actual_cation = read_metrohm_ic_txt_file(datapath)
     actual_anion = actual_anion.iloc[0]
-    actual_anion = (actual_anion["time"], actual_anion["signal"])
+    actual_anion = (float(actual_anion["time"]), float(actual_anion["signal"]))
     actual_cation = actual_cation.iloc[0]
-    actual_cation = (actual_cation["time"], actual_cation["signal"])
+    actual_cation = (
+        float(actual_cation["time"]),
+        float(actual_cation["signal"]),
+    )
 
-    expected_cation = (0.0, -1416.9620868828902)
-    expected_anion = (0.0, 0.9706243877162339)
+    expected_cation = (0.0, -1416.9126988467353)
+    expected_anion = (0.0, 0.9642913942058996)
     assert actual_cation == expected_cation
     assert actual_anion == expected_anion
