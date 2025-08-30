@@ -4,10 +4,12 @@ from chromatography_processing.read_metrohm_ic_txt_files import (
 )
 from pathlib import Path
 
-# datapath = (Path(__file__).parent.parent / 'metrohm_ic_test_files' /
-#             'ancat_chromatogram.txt')
-datapath = Path("/Users/ianbillinge/dev/chromatography_processing/tests/")
-datapath = datapath / "metrohm_ic_test_files" / "ancat_chromatogram.txt"
+datapath = (
+    Path(__file__).parent.parent
+    / "tests"
+    / "metrohm_ic_test_files"
+    / "ancat_chromatogram.txt"
+)
 
 
 def test_first_data_point_is_correct():
