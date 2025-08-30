@@ -1,0 +1,8 @@
+{
+  "project_name": "chromatography_processing",
+  "github_username_or_orgname": "iblg",
+  "github_repo_name": "chromatography_processing",
+  "conda_pypi_package_dist_name": "chromatography_processing",
+  "package_dir_name": "chromatography_processing",
+  "contributors": "Ian Billinge"
+}
