@@ -1,10 +1,17 @@
 import pandas as pd
 from pathlib import Path
+import re
+import xarray as xr
 
 
 def read_metrohm_ic_txt_file(path_to_data: Path) -> pd.DataFrame:
     data = pd.read_csv(path_to_data, encoding="unicode-escape")
     data = data.iloc[:, 0]  # convert to a series
+
+    # get rack positions
+    rack_position = data.iloc[0]
+    rack_position = re.findall(r"\d+", rack_position)
+    rack_position = int(rack_position[0])
 
     anion_chromatogram_indices = data[
         data.str.contains("Anion")
@@ -29,7 +36,31 @@ def read_metrohm_ic_txt_file(path_to_data: Path) -> pd.DataFrame:
     )
     cat = cat.astype(float)
 
-    return an, cat
+    return an, cat, rack_position
+
+
+def read_metrohm_ic_files_to_xarray(file_paths: list) -> xr.Dataset:
+    anion_dfs, cation_dfs = [], []
+    for file in file_paths:
+        anion_df, cation_df, rack_position = read_metrohm_ic_txt_file(file)
+
+        cation_df["rack_position"] = rack_position
+        anion_df["rack_position"] = rack_position
+        anion_dfs.append(anion_df)
+        cation_dfs.append(cation_df)
+
+    anion_df = pd.concat(anion_dfs)
+    cation_df = pd.concat(cation_dfs)
+    # anion_df = anion_df.rename(columns={'signal':'anion_signal'})
+    # cation_df = cation_df.rename(columns={'signal':'cation_signal'})
+    anion_df["type"] = "anion"
+    cation_df["type"] = "cation"
+    anion_df = anion_df.set_index(["type", "rack_position", "time"])
+    cation_df = cation_df.set_index(["type", "rack_position", "time"])
+    anion_data = anion_df.to_xarray()
+    cation_data = cation_df.to_xarray()
+    data = xr.concat([anion_data, cation_data], dim="type", join="outer")
+    return data
 
 
 def main():
