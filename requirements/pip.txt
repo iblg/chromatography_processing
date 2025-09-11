@@ -1,3 +1,6 @@
 numpy
 matplotlib
 pandas
+pybaselines
+hplc-py
+xarray
