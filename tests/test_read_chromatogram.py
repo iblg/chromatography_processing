@@ -1,7 +1,5 @@
 # import pytest
-from chromatography_processing.read_metrohm_ic_txt_files import (
-    read_metrohm_ic_txt_file,
-)
+from chromatography_processing.read_chromatogram import read_chromatogram
 from pathlib import Path
 
 datapath = (
@@ -13,7 +11,9 @@ datapath = (
 
 
 def test_first_data_point_is_correct():
-    actual_anion, actual_cation = read_metrohm_ic_txt_file(datapath)
+    data, ident, meas_time, types = read_chromatogram(datapath)
+    actual_anion = data[0]
+    actual_cation = data[1]
     actual_anion = actual_anion.iloc[0]
     actual_anion = (float(actual_anion["time"]), float(actual_anion["signal"]))
     actual_cation = actual_cation.iloc[0]
