@@ -16,28 +16,49 @@ def read_chromatogram(
     """
     data = pd.read_csv(path_to_data, encoding="unicode-escape")
     data = data.iloc[:, 0]  # convert to a series
+
+    # drop pressure data, leaving only conductivity
+    pressure_indices = data[data.str.contains("Pressure")].index.tolist()
+    data = data[: pressure_indices[0]]
+    print("Data without pressures")
+    print(data)
+
     anion_chromatogram_indices = data[
         data.str.contains("Anion")
     ].index.tolist()
     cation_chromatogram_indices = data[
         data.str.contains("Cation")
     ].index.tolist()
+    print(anion_chromatogram_indices)
+    print(cation_chromatogram_indices)
 
     an = data.iloc[
         anion_chromatogram_indices[0] + 3 : cation_chromatogram_indices[0]
     ]
-    an = an.str.split(pat=";", expand=True)
-    an = an.rename(columns={an.columns[0]: "time", an.columns[1]: "signal"})
-    an = an.astype(float)
-
     cat = data.iloc[
         cation_chromatogram_indices[0] + 3 : anion_chromatogram_indices[1]
     ]
-    cat = cat.str.split(pat=";", expand=True)
-    cat = cat.rename(
-        columns={cat.columns[0]: "time", cat.columns[1]: "signal"}
-    )
-    cat = cat.astype(float)
+
+    def process_chromatogram_from_list_to_dataframe(data):
+        data = data.split(pat=";", expand=True)
+        data = data.rename(
+            columns={data.columns[0]: "time", data.columns[1]: "signal"}
+        )
+        data = data.astype(float)
+        return data
+
+    an = process_chromatogram_from_list_to_dataframe(an)
+    cat = process_chromatogram_from_list_to_dataframe(cat)
+    # an = an.str.split(pat=";", expand=True)
+    # an = an.rename(columns={an.columns[0]: "time", an.columns[1]: "signal"})
+    # an = an.astype(float)
+    #
+    #
+    # cat = cat.str.split(pat=";", expand=True)
+    # cat = cat.rename(
+    #     columns={cat.columns[0]: "time", cat.columns[1]: "signal"}
+    # )
+    # cat = cat.astype(float)
 
     ident = data.iloc[0]
     meas_time = data.name
