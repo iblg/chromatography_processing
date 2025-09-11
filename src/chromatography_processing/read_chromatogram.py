@@ -76,7 +76,7 @@ def read_chromatogram(
         indices = get_chromatogram_indices(data, "Cation")
         an = data.iloc[indices[0] : indices[1]]
         an = process_chromatogram_from_list_to_dataframe(an)
-        an["signal"] = np.nan
+        an["signal"] = -1  # replace with placeholder data
 
     if cations_present:
         indices = get_chromatogram_indices(data, "Cation")
@@ -88,7 +88,7 @@ def read_chromatogram(
         indices = get_chromatogram_indices(data, "Anion")
         cat = data.iloc[indices[0] : indices[1]]
         cat = process_chromatogram_from_list_to_dataframe(cat)
-        cat["signal"] = np.nan
+        cat["signal"] = -1  # replace with placeholder data
 
     # an = an.str.split(pat=";", expand=True)
     # an = an.rename(columns={an.columns[0]: "time", an.columns[1]: "signal"})
