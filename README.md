@@ -4,6 +4,14 @@ Here is a quick tutorial on how to locally install the package.
 
 ## How to install `chromatography_processing` locally
 
+`cd` to the directory where you want to house `chromatography_processing` locally (e.g. `~/dev/`)
+
+Clone the repo:
+
+```bash
+git clone 
+```
+
 `cd` into the project directory:
 
 ```bash
