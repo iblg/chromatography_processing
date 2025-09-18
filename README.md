@@ -9,7 +9,7 @@ Here is a quick tutorial on how to locally install the package.
 Clone the repo:
 
 ```bash
-git clone 
+git clone git@github.com:iblg/chromatography_processing.git
 ```
 
 `cd` into the project directory:
