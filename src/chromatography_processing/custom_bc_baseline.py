@@ -51,7 +51,6 @@ def fit_dataset_with_custom_bc_baseline(
             #     print(bck)
             bck = bck.set_index(["ion_type", "time", "measurement_time"])
             bck = bck.to_xarray()
-            print(bck)
             results.append(bck)
 
     background = xr.combine_by_coords(results, join="outer")
