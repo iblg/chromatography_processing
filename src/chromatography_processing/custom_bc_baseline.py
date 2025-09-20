@@ -28,7 +28,8 @@ def fit_dataset_with_custom_bc_baseline(
         d = d.where(d.time >= time_range[0], drop=True)
         d = d.where(d.time <= time_range[1], drop=True)
 
-        for i in range(d.ident.shape[0]):
+        for i in range(d.ident.shape[0]):  # for sample in samples
+            # select this sample and drop nans
             to_fit = d.isel(measurement_time=i).dropna(dim="time", how="all")
 
             bck, params = find_custom_bc_baseline(

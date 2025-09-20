@@ -187,7 +187,7 @@ def read_chromatograms_in_folder_to_xarray(
         """
 
         data = [
-            d.set_index(["ion_type", "time", "measurement_time"]) for d in data
+            d.set_index(["ion_type", "measurement_time", "time"]) for d in data
         ]
         data = [d.to_xarray() for d in data]
         data = xr.combine_by_coords(data, join="outer")
