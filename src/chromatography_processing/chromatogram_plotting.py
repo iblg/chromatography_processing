@@ -57,3 +57,40 @@ def plot_all_from_run(
     plot_anion_or_cation(cation, parent_dir, cation_filename, show_flag)
 
     return
+
+
+def plot_linear_model_results(
+    model, result, show_plot_flag=True, save_plot=False
+):
+    """
+
+    :param model: A model instance. Returned by linearfit.
+
+    :param result: A model fitting result. Returned by linearfit.
+
+    :param show_plot_flag: bool. If True, show the plot.
+
+    :param save_plot: bool. If False, don't save the plot.
+    If not false, save the plot at location save_plot. In this case save_plot
+    should be a string or path, for example
+    '~/User/Desktop/plot.png'
+    or
+    Path('~/User/Desktop/plot.png').
+    :return: fig, ax
+    """
+    fig, ax = plt.subplots()
+    x = model.exog[:, -1]
+    y = model.endog
+    ax.plot(x, y, "o", label="Data passed to model")
+    ax.plot(x, result.predict(), label="Model prediction")
+    ax.legend()
+
+    if save_plot is False:
+        pass
+    else:
+        fig.savefig(save_plot, bbox_inches="tight", dpi=300)
+
+    if show_plot_flag:
+        plt.show()
+
+    return fig, ax

@@ -45,6 +45,7 @@ def open_ic_file(path_to_file):
     print("reading {}".format(path_to_file))
     # help(pd.read_csv)
     df = pd.read_csv(path_to_file, delimiter=";")
+    print(df)
     idx = df["Ident"].iloc[0]
     idx = idx.split("pos")[1]
     idx = int(idx)
@@ -62,8 +63,6 @@ def open_list_of_ic_files(parent_dir):
     :return:
     """
     files = list(parent_dir.glob("*.csv"))
-    print("In open_list_of_ic_files")
-    print(files)
     data = [open_ic_file(file) for file in files]
     data = pd.concat(data, axis="rows")
     data = data.sort_index()
