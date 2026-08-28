@@ -1,5 +1,6 @@
 import pandas as pd
 import shutil
+from pathlib import Path
 
 
 def copy_csvs_to_from_import(path_to_files):
@@ -42,10 +43,9 @@ def open_ic_file(path_to_file):
     :param path_to_file: Path Path to fild data files
     :return:
     """
-    print("reading {}".format(path_to_file))
+    # print("reading {}".format(path_to_file))
     # help(pd.read_csv)
     df = pd.read_csv(path_to_file, delimiter=";")
-    print(df)
     idx = df["Ident"].iloc[0]
     idx = idx.split("pos")[1]
     idx = int(idx)
@@ -55,7 +55,7 @@ def open_ic_file(path_to_file):
     return df
 
 
-def open_list_of_ic_files(parent_dir):
+def open_ic_files_from_dir(parent_dir: Path):
     """Opens a list of ic files.
 
     :param parent_dir: pathlib.Path Path to directory containing IC

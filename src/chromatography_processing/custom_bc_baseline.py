@@ -17,7 +17,7 @@ def fit_dataset_with_custom_bc_baseline(
     sampling: int = 15,
 ):
 
-    results = []
+    results = {ion_type: [] for ion_type in data.ion_type.values}
     for ion_type in data.ion_type.values:
         # trim by time before fitting
         if ion_type == "anion":
@@ -31,7 +31,8 @@ def fit_dataset_with_custom_bc_baseline(
         for i in range(d.ident.shape[0]):  # for sample in samples
             # select this sample and drop nans
             to_fit = d.isel(measurement_time=i).dropna(dim="time", how="all")
-
+            # print('\n\nTo fit: ')
+            # print(to_fit)
             bck, params = find_custom_bc_baseline(
                 to_fit.to_dataframe(),
                 x=x,
@@ -44,17 +45,33 @@ def fit_dataset_with_custom_bc_baseline(
             )
 
             bck = pd.DataFrame(bck, columns=["bck"])
-            bck["ion_type"] = ion_type
+            # print(bck)
+            # bck["ion_type"] = ion_type
             bck["time"] = to_fit.time.values
             bck["measurement_time"] = to_fit.measurement_time.values
             bck["ident"] = to_fit.ident.values
             # with pd.option_context('display.max_columns', None,):
             #     print(bck)
-            bck = bck.set_index(["ion_type", "time", "measurement_time"])
+            bck = bck.set_index(
+                [
+                    # "ion_type",
+                    "time",
+                    "measurement_time",
+                ]
+            )
             bck = bck.to_xarray()
-            results.append(bck)
-
-    background = xr.combine_by_coords(results, join="outer")
+            results[ion_type].append(bck)
+            # results.append(bck)
+    combined_by_ion = {
+        ion_type: xr.combine_by_coords(ds_list, join="outer")
+        for ion_type, ds_list in results.items()
+    }
+    background = xr.concat(
+        list(combined_by_ion.values()),
+        dim=pd.Index(list(combined_by_ion.keys()), name="ion_type"),
+        join="outer",
+    )
+    # background = xr.combine_by_coords(results, join="outer")
     data["background"] = background["bck"]
     data["reduced_signal"] = data["signal"] - data["background"]
 
@@ -103,8 +120,10 @@ def find_custom_bc_baseline(
     The params of the baseline
     """
     data = data.reset_index()
+    # print(data.info())
     x = data[x]
     y = data[y]
+
     crossover_index = np.argmin(abs(x - crossover_index_number))
     baseline_fitter = Baseline(x_data=x)
 
