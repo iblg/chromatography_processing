@@ -152,6 +152,7 @@ def plot_chromatogram(data):
 
 def read_chromatograms_in_folder_to_xarray(
     path_to_folder: Path,
+    substring: str = None,
 ) -> xarray.Dataset:
     """
     :param path_to_folder: pathlib.Path.
@@ -162,8 +163,13 @@ def read_chromatograms_in_folder_to_xarray(
     The data for the entire folder.
     """
     # Find all .txt files in the folder.
-    files = path_to_folder.glob("*.txt")
+    if substring is None:
+        search_string = "*.txt"
+    else:
+        search_string = "*" + substring + "*.txt"
 
+    files = list(path_to_folder.glob(search_string))
+    print("Found these files:", files)
     # make a list of chromatograms
     data = [read_chromatogram(file) for file in files]
 
@@ -219,13 +225,14 @@ def read_chromatograms_in_folder_to_xarray(
     def convert_idents_to_coord(data):
         idents = data["ident"].isel(time=0, ion_type=0).values.tolist()
         new_idents = []
-        for ident in idents:
+        for idx, ident in enumerate(idents):
             if "ian_pos" in ident:
                 i = int(ident.split("ian_pos")[1])
                 new_idents.append(i)
                 pass
             else:
                 new_idents.append(ident)
+
         data = data.drop_vars(["ident"])
         data = data.assign_coords(ident=("measurement_time", idents))
         return data
@@ -257,4 +264,5 @@ def read_chromatograms_in_folder_to_xarray(
         data.time.values.min(), data.time.values.max(), 2000
     )
     data = interpolated_ds.interp(time=time_grid)
+    data = data.sortby("measurement_time")
     return data

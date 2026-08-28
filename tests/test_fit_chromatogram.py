@@ -1,5 +1,7 @@
 import pytest
-from chromatography_processing.fit_dataset import fit_dataset
+from chromatography_processing.fit_dataset import (
+    make_chromatograms_for_dataset,
+)
 import pandas as pd
 
 
@@ -19,7 +21,7 @@ ds = ds.to_xarray()
     ],
 )
 def test_fit_dataset_TypeError_if_not_passed_dataset(data):
-    assert pytest.raises(TypeError, fit_dataset, data)
+    assert pytest.raises(TypeError, make_chromatograms_for_dataset, data)
 
 
 #
